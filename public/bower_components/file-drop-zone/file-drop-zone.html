@@ -1,0 +1,50 @@
+<html><head><link rel="import" href="../polymer/polymer-element.html"><link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html"></head><body><dom-module id="file-drop-zone"><template><style include="iron-flex iron-flex-alignment">:host{display:block;box-sizing:border-box;cursor:pointer;@apply (--layout-vertical);@apply (--layout-center);@apply (--layout-center-justified);}#files{display:none;}</style><input id="files" type="file" name$="[[name]]" multiple$="[[multiple]]" accept$="[[accept]]" required$="[[required]]" on-change="_onFilePick"><slot name="drop-zone"></slot></template><script>class FileDropZone extends Polymer.GestureEventListeners(Polymer.Element){static get is(){return"file-drop-zone"}/**
+   * Fired when files are selected.
+   *
+   * @event selected
+   * @param {FileList} fileList [FileList](https://developer.mozilla.org/en-US/docs/Web/API/FileList) of selected files.
+   */ /**
+   * Fired when error is encountered.
+   *
+   * @event error
+   * @param {ErrorEvent} error ErrorEvent
+   */static get properties(){return{/**
+       * Indicates if any files are selected.
+       * @type {Boolean}
+       */hasFiles:{type:Boolean,notify:!0/* ignoreName */ /* skipSlots */,readOnly:!0,reflectToAttribute:!0,computed:"_hasFiles(files)"},/**
+       * Specifies that the user must fill in a value before submitting a form.
+       * @type {Boolean}
+       */required:{type:Boolean,reflectToAttribute:!0},/**
+       * Indicates if `file-drop-zone` can have more than one file selected.
+       * @type {Boolean}
+       */multiple:{type:Boolean,reflectToAttribute:!0},/**
+       * Indicate the types of files that the server accepts, otherwise it will
+       * be ignored. The value must be a comma-separated list of unique content
+       * type specifiers:
+       * - A file extension starting with the STOP character (U+002E). (e.g. .jpg, .png, .doc).
+       * - A valid MIME type with no extensions.
+       * - audio/* representing sound files.
+       * - video/* representing video files.
+       * - image/* representing image files.
+       *
+       * @type {String}
+       */accept:{type:String,reflectToAttribute:!0},/**
+       * The name of the control, which is submitted with the form data.
+       * @type {String}
+       */name:{type:String,reflectToAttribute:!0},/**
+       * An array of [Files](https://developer.mozilla.org/en-US/docs/Web/API/File) currently selected.
+       * @type {File[]}
+       */files:{type:Array,notify:!0,readOnly:!0},/**
+       * The most recent [File](https://developer.mozilla.org/en-US/docs/Web/API/File) selected.
+       * @type {File}
+       */lastFile:{type:Object,notify:!0,readOnly:!0,computed:"_getLastFile(files)"},/**
+       * Number of Files selected.
+       * @type {Number}
+       */numFilesSelected:{type:Number,notify:!0,readOnly:!0,computed:"_getLen(files)"},/**
+       * Last error event.
+       * @type {{message: String}}
+       */lastError:{type:Object,notify:!0,readOnly:!0,observer:"_lastErrorChanged"},/**
+       * Event handler for change event for `input`.
+       * @type {Function}
+       */onchange:{type:Function,value:null,observer:"_onchangeChanged"}}}constructor(){super();this.addEventListener("dragover",e=>this._onDragEvent(e));this.addEventListener("dragleave",e=>this._onDragEvent(e));this.addEventListener("drop",e=>this._onFileDrop(e));Polymer.Gestures.addListener(this,"tap",e=>this.$.files.click())}_onchangeChanged(cb){if(cb)this.$.files.onchange=cb}_lastErrorChanged(error){if(error){this.classList.toggle("errored",!0);this.dispatchEvent(error)}else{this.classList.toggle("errored",/* ignoreName */!1/* skipSlots */ /* skipSlots */)}}_validate(fileList){if(!this.accept||0===this.accept.length)return!0;var acceptList=this.accept.split(",").map(s=>s.trim().toLowerCase());if(0===acceptList.length)return!0;var hasAudio=0<=acceptList.indexOf("audio/*"),hasVideo=0<=acceptList.indexOf("video/*"),hasImage=0<=acceptList.indexOf("image/*");for(let i=0,len=fileList.length,ext;i<len;++i){ext="."+fileList[i].name.split(".").pop().toLowerCase();if(0<=acceptList.indexOf(ext))continue;if(hasAudio&&"audio"===fileList[i].type.split("/")[0])continue;if(hasVideo&&"video"===fileList[i].type.split("/")[0])continue;if(hasImage&&"image"===fileList[i].type.split("/")[0])continue;if(0<=acceptList.indexOf(fileList[i].type))continue;// did not match anything in accept
+let message=`${fileList[i].name} has invalid file format not found in accept attribute!`;this._setLastError(new ErrorEvent("error",{message}));return!1}return!0}_getLastFile(files){return files?files[files.length-1]:null}_getLen(files){return files?files.length:0}_hasFiles(files){return files&&0<files.length}_onDragEvent(e){e.stopPropagation();e.preventDefault();this.classList.toggle("dragover","dragover"===e.type);e.dataTransfer.dropEffect="drop"}_onFilePick(e){e.stopPropagation();e.preventDefault();this._setLastError(null);this._setFiles(this._toArray(e.target.files));this.dispatchEvent(new CustomEvent("selected",{detail:e.target.files}));this.dispatchEvent(new CustomEvent("change",{detail:e.target.files}));this.$.files.value=null}_onFileDrop(e){e.stopPropagation();e.preventDefault();this._setLastError(null);this.classList.toggle("dragover",!1);var files=e.dataTransfer.files;if(!this.multiple&&1<files.length){let message=`${files.length} files selected when multiple attribute is not present!`;this._setLastError(new ErrorEvent("error",{message}));return}var ok=this._validate(files);if(ok){this._setFiles(this._toArray(files));this.dispatchEvent(new CustomEvent("selected",{detail:files}));this.dispatchEvent(new CustomEvent("change",{detail:files}));this.$.files.value=null}}_toArray(fileList){var a=[];for(let i=0,len=fileList.length;i<len;++i){a.push(fileList.item(i))}return a}}window.customElements.define(FileDropZone.is,FileDropZone);</script></dom-module></body></html>

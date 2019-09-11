@@ -1,0 +1,14 @@
+drop table service_region;
+drop table region;
+drop table driver_document;
+alter table driver drop column documents_note;
+alter table service drop column keep_estimated_fee;
+alter table service drop column should_estimate_fee;
+alter table service drop column can_use_confirmation_code;
+alter table service drop column provider_share_percent;
+alter table service drop column provider_share_flat;
+alter table travel drop foreign key travel_ibfk_2;
+alter table travel drop column service_id;
+alter table travel drop column confirmation_code;
+alter table rider drop key rider_mobile_number_uindex;
+alter table driver drop key driver_mobile_number_uindex;

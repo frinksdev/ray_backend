@@ -1,0 +1,1 @@
+ALTER TABLE travel ADD COLUMN eta_pickup TIMESTAMP NULL;

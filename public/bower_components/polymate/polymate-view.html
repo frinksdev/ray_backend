@@ -1,0 +1,30 @@
+<html><head><link rel="import" href="../polymer/polymer-element.html"><link rel="import" href="../paper-icon-button/paper-icon-button.html"><link rel="import" href="./polymate-behavior.html"><link rel="import" href="./polymate-demo-controllers.html"></head><body><dom-module id="polymate-view"><template><style>:host{display:inline-block;width:var(--polymate-view-width, 1em);height:var(--polymate-view-height, 1em);min-height:auto;margin:0 auto;}</style><template is="dom-if" if="[[showControllers]]"><polymate-demo-controllers id="demo-controllers" anim="[[anim]]" options="{{options}}"></polymate-demo-controllers></template><div id="polymate"></div></template><script>/**
+     * `polymate-view`
+     * lottie view component for polymer
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */class PolymateView extends PolymateBehavior(Polymer.Element){static get is(){return"polymate-view"}static get properties(){return{/**
+           * @desc animation object
+           * @type {Object}
+           */anim:{type:Object,notify:!0/* ignoreName */ /* skipSlots */},/**
+           * @desc animation's options
+           * @type {Object}
+           */options:{type:Object,value:{}},/**
+           * @desc path
+           * @type {String}
+           */path:String,/**
+           * @desc autoplay
+           * @type {Boolean}
+           */autoplay:Boolean,/**
+           * @desc loop
+           * @type {Boolean}
+           */loop:Boolean,/**
+           * @desc enable demo controllers
+           * @type {Boolean}
+           */showControllers:{type:Boolean,value:/* ignoreName */!1/* skipSlots */ /* skipSlots */}}}static get observers(){return["_reloadAnimation(options.*)"]}/**
+       * @desc reinitialize if options are updated
+       * @param {Object} options
+       * @return {Object} anim
+       */_reloadAnimation(options){if(this.anim)this.anim.destroy();let newOptions=options.value?options.value:{};if(this.path)newOptions.path=this.path;if(this.autoplay)newOptions.autoplay=this.autoplay;if(this.loop)newOptions.loop=this.loop;this.anim=this.initializeLottie(newOptions)}}window.customElements.define(PolymateView.is,PolymateView);</script></dom-module></body></html>

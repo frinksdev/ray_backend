@@ -1,0 +1,1 @@
+var defaultLang="es",langs=[{id:"en",name:"English"},{id:"es",name:"Español"}],currency={symbol:"$",precision:2,unit_symbol:","};

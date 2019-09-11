@@ -1,0 +1,22 @@
+<html><head><link rel="import" href="../polymer/polymer-element.html"><link rel="import" href="./polymate-behavior.html"><link rel="import" href="../paper-icon-button/paper-icon-button.html"><link rel="import" href="../paper-button/paper-button.html"><link rel="import" href="../paper-slider/paper-slider.html"><link rel="import" href="../paper-icon-button/paper-icon-button-light.html"></head><body><dom-module id="polymate-demo-controllers"><template><style>:host{display:block;font-size:12px;}.basic,
+      #controllers{display:flex;}#controllers{margin-bottom:20px;}.caption{padding-left:5px;color:#a0a0a0;}.speed-container{text-align:left;padding-left:10px;}</style><hr><div id="controllers"><div class="speed-container">Speed: <span id="speedValue" class="caption"></span><paper-slider id="speed" value="1" pin="" max="7" snaps="" step=".001"></paper-slider></div><div class="basic"><paper-icon-button icon="av:play"></paper-icon-button><paper-button raised="" on-click="stop">Stop</paper-button><paper-button raised="" on-click="_togglePlayPause"><span id="playPause">[[_playPause]]</span></paper-button><paper-button raised="" id="reverseDirection">Reverse Direction</paper-button></div></div><hr></template><script>/**
+     * `polymate-demo`
+     *  
+     * demo helper for polymate-view
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */class PolymerDemoControllers extends PolymateBehavior(Polymer.Element){static get is(){return"polymate-demo-controllers"}static get properties(){return{/**
+           * @desc animation object from polymate view
+           * @type {Object}
+           */anim:Object,/**
+           * @desc animation options from polymate view
+           * @type {Object}
+           */options:Object,/**
+           * @desc play or pause
+           * @type {String}
+           */_playPause:String}}ready(){super.ready();let controller=this;this.$.reverseDirection.addEventListener("click",function(){controller.reverseDirection()});window.addEventListener("WebComponentsReady",function(){if(!controller.anim)return;if(controller.anim.autoplay){controller._playPause=controller.anim.autoplay?"Pause":"Play"}controller.$.speed.addEventListener("value-change",function(){controller.$.speedValue.textContent=controller.$.speed.value+"x";controller.anim.setSpeed(controller.$.speed.value)})})}/**
+        * @desc toggle play/pause animation
+        * @return {Void}
+        */_togglePlayPause(){if(this.anim.isPaused){this.play();this._playPause="Pause"}else{this.pause();this._playPause="Play"}}}window.customElements.define(PolymerDemoControllers.is,PolymerDemoControllers);</script></dom-module></body></html>
